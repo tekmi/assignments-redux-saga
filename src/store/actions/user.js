@@ -23,35 +23,10 @@ export const userGetFail = (errorMessage) => {
 };
 
 export const userGet = (token, userId) => {
-    return dispatch => {
-        dispatch(userGetStart());
-
-        const config = {
-            "headers": {
-                'Accept': 'application/ld+json',
-                'Content-Type': 'application/ld+json',
-                'Authorization': `Bearer ${token}`
-            }
-        };
-
-        axios.get(`/users/${userId}`, config)
-            .then(response => {
-                let userDetails = {
-                    id: response.data.id,
-                    name: response.data.name,
-                    companyName: response.data.companyName,
-                    billingAddress: response.data.addresses[0].street,
-                    billingCity: response.data.addresses[0].city,
-                    billingPostalCode: response.data.addresses[0].postalCode,
-                    billingCountry: response.data.addresses[0].countryCode,
-                    billingAddressUri: response.data.addresses[0]['@id']
-                };
-
-                dispatch(userGetSuccess(userDetails));
-            })
-            .catch(err => {
-                dispatch(userGetFail(err.response.data.errorMessage));
-            });
+    return {
+        type: actionTypes.USER_GET_INIT,
+        token: token,
+        userId: userId
     }
 };
 
@@ -76,49 +51,11 @@ export const userUpdateFail = (errorMessage) => {
 };
 
 export const userUpdate = (token, userId, userDetails) => {
-    return dispatch => {
-        dispatch(userUpdateStart());
-
-        let data = {
-            "name": userDetails.name,
-            "companyName": userDetails.companyName,
-            "addresses": [
-                {
-                    "@id": userDetails.billingAddressUri,
-                    "street": userDetails.billingAddress,
-                    "city": userDetails.billingCity,
-                    "postalCode": userDetails.billingPostalCode,
-                    "countryCode": userDetails.billingCountry
-                }
-            ]
-        };
-
-        const config = {
-            "headers": {
-                'Accept': 'application/ld+json',
-                'Content-Type': 'application/ld+json',
-                'Authorization': `Bearer ${token}`
-            }
-        };
-
-        axios.put(`/users/${userId}`, data, config)
-            .then(response => {
-                let userDetails = {
-                    id: response.data.id,
-                    name: response.data.name,
-                    companyName: response.data.companyName,
-                    billingAddress: response.data.addresses[0].street,
-                    billingCity: response.data.addresses[0].city,
-                    billingPostalCode: response.data.addresses[0].postalCode,
-                    billingCountry: response.data.addresses[0].countryCode,
-                    billingAddressUri: response.data.addresses[0]['@id']
-                };
-
-                dispatch(userUpdateSuccess(userDetails));
-            })
-            .catch(err => {
-                dispatch(userUpdateFail(err.response.data.errorMessage));
-            });
+    return {
+        type: actionTypes.USER_UPDATE_INIT,
+        token: token,
+        userId: userId,
+        userDetails: userDetails
     }
 };
 
